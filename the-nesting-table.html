@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The Nesting Table</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --sage:       #7a8f6c;
+      --sage-light: #adbf9e;
+      --sage-pale:  #dde8d5;
+      --cream:      #f7f2e9;
+      --warm-white: #fdfaf4;
+      --rust:       #b5522e;
+      --rust-light: #d47354;
+      --brown:      #4e3420;
+      --brown-mid:  #7a5238;
+      --tan:        #c3a47a;
+      --linen:      #ece5d6;
+      --gold:       #c08b35;
+      --charcoal:   #2e2416;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--warm-white);
+      color: var(--brown);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 20px 52px;
+      background: rgba(253,250,244,0.93);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(195,164,122,0.22);
+    }
+    .nav-logo { display: flex; flex-direction: column; line-height: 1; }
+    .nav-logo-main {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; font-weight: 600; color: var(--brown); letter-spacing: 0.03em;
+    }
+    .nav-logo-sub {
+      font-family: 'Lora', serif; font-style: italic;
+      font-size: 0.58rem; color: var(--tan); letter-spacing: 0.18em; margin-top: 2px;
+    }
+    .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+    .nav-links a {
+      text-decoration: none; color: var(--brown-mid);
+      font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+      opacity: 0.75; transition: opacity 0.25s, color 0.25s;
+    }
+    .nav-links a:hover { opacity: 1; color: var(--rust); }
+    .nav-cta {
+      background: var(--rust); color: white !important; opacity: 1 !important;
+      padding: 9px 22px; transition: background 0.25s !important;
+    }
+    .nav-cta:hover { background: var(--brown) !important; }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center; padding: 130px 52px 80px; gap: 60px;
+      background: var(--cream); position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: ''; position: absolute; right: -100px; top: 50%;
+      transform: translateY(-50%);
+      width: 520px; height: 520px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(122,143,108,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-text { animation: fadeUp 0.9s ease both; position: relative; z-index: 2; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 0.63rem; letter-spacing: 0.26em; text-transform: uppercase;
+      color: var(--sage); margin-bottom: 20px;
+    }
+    .hero-tag::before { content: ''; display: block; width: 26px; height: 1px; background: var(--sage); }
+    h1.hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 5.2vw, 5rem);
+      font-weight: 400; line-height: 1.1; color: var(--brown); margin-bottom: 12px;
+    }
+    h1.hero-title em { font-style: italic; color: var(--rust); }
+    .hero-verse {
+      font-family: 'Lora', serif; font-style: italic;
+      font-size: 0.8rem; color: var(--tan); margin-bottom: 26px; line-height: 1.65;
+    }
+    .hero-desc {
+      font-size: 0.88rem; line-height: 2; color: var(--brown-mid);
+      max-width: 400px; margin-bottom: 40px; opacity: 0.85;
+    }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 32px; }
+    .btn-primary {
+      background: var(--rust); color: white; border: none;
+      padding: 14px 34px; font-family: 'Jost', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; display: inline-block;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--brown); transform: translateY(-2px); }
+    .btn-ghost {
+      border: 1.5px solid var(--tan); color: var(--brown-mid);
+      padding: 13px 30px; font-family: 'Jost', sans-serif;
+      font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+      cursor: pointer; text-decoration: none; display: inline-block;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--rust); color: var(--rust); }
+    .hero-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pill {
+      background: var(--linen); color: var(--brown-mid);
+      font-size: 0.63rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 5px 14px; border-radius: 20px;
+    }
+    .hero-art {
+      display: flex; justify-content: center; align-items: center;
+      animation: fadeUp 1s ease 0.15s both; position: relative; z-index: 2;
+    }
+    .hero-art svg { width: 100%; max-width: 490px; }
+
+    /* MARQUEE */
+    .marquee {
+      background: var(--brown); color: var(--cream);
+      padding: 13px 0; overflow: hidden; white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-flex; gap: 48px;
+      animation: slide 24s linear infinite;
+      font-family: 'Lora', serif; font-style: italic; font-size: 0.85rem;
+    }
+    .marquee-track span { color: var(--tan); }
+
+    /* SHARED */
+    .section-label {
+      font-size: 0.62rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--sage); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-label::after { content: ''; display: block; width: 30px; height: 1px; background: var(--sage); }
+    h2.sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.4vw, 2.9rem);
+      font-weight: 400; line-height: 1.15; color: var(--brown); margin-bottom: 18px;
+    }
+    h2.sec-title em { font-style: italic; color: var(--rust); }
+
+    /* WHY */
+    .why {
+      padding: 110px 52px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+    }
+    .why-text p {
+      font-size: 0.87rem; line-height: 2.1; color: var(--brown-mid); margin-bottom: 24px;
+    }
+    .scripture-block {
+      background: var(--linen); border-left: 3px solid var(--gold);
+      padding: 22px 26px; margin-top: 6px;
+      font-family: 'Lora', serif; font-style: italic;
+      font-size: 0.87rem; line-height: 1.9; color: var(--brown-mid);
+    }
+    .scripture-block cite {
+      display: block; margin-top: 10px; font-style: normal;
+      font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold);
+    }
+    .why-values { display: flex; flex-direction: column; gap: 18px; }
+    .why-value {
+      display: flex; gap: 18px; align-items: flex-start;
+      padding: 20px 22px; background: var(--cream);
+      border-top: 2px solid transparent;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .why-value:hover { border-color: var(--sage); transform: translateX(5px); }
+    .why-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+    .why-value h4 {
+      font-family: 'Playfair Display', serif; font-size: 0.97rem; font-weight: 400;
+      color: var(--brown); margin-bottom: 6px;
+    }
+    .why-value p { font-size: 0.73rem; line-height: 1.85; color: var(--brown-mid); opacity: 0.75; }
+
+    /* PRODUCTS */
+    .products { background: var(--linen); padding: 110px 52px; }
+    .products-header { margin-bottom: 52px; }
+    .products-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 22px; }
+    .product-card {
+      background: var(--warm-white); padding: 0 0 28px; overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .product-card:hover { transform: translateY(-7px); box-shadow: 0 18px 46px rgba(78,52,32,0.1); }
+    .product-art {
+      height: 175px; width: 100%;
+      display: flex; align-items: center; justify-content: center; font-size: 3.8rem;
+    }
+    .pa-birdhouse { background: linear-gradient(160deg,#d4c4a8,#b8a07a); }
+    .pa-baked     { background: linear-gradient(160deg,#e8d5b0,#d4b87a); }
+    .pa-eggs      { background: linear-gradient(160deg,#dde8d5,#adbf9e); }
+    .pa-garden    { background: linear-gradient(160deg,#c8d8b0,#8fae78); }
+    .product-body { padding: 22px 22px 0; }
+    .product-tag { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); margin-bottom: 8px; }
+    .product-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 400; color: var(--brown); margin-bottom: 8px; }
+    .product-desc { font-size: 0.72rem; line-height: 1.85; color: var(--brown-mid); opacity: 0.75; margin-bottom: 16px; }
+    .product-price { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--rust); }
+
+    /* CHANNELS */
+    .channels {
+      padding: 110px 52px;
+      display: grid; grid-template-columns: 5fr 7fr; gap: 80px; align-items: start;
+    }
+    .channels-text p { font-size: 0.87rem; line-height: 2.1; color: var(--brown-mid); margin-top: 16px; }
+    .channel-list { display: flex; flex-direction: column; }
+    .channel-item {
+      display: grid; grid-template-columns: 56px 1fr; gap: 22px; align-items: start;
+      padding: 26px 0; border-bottom: 1px solid var(--linen);
+    }
+    .channel-item:first-child { border-top: 1px solid var(--linen); }
+    .channel-num {
+      font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 400;
+      color: var(--tan); line-height: 1; padding-top: 4px;
+    }
+    .channel-content h4 {
+      font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 400;
+      color: var(--brown); margin-bottom: 7px;
+    }
+    .channel-content p { font-size: 0.73rem; line-height: 1.88; color: var(--brown-mid); opacity: 0.75; }
+    .channel-badge {
+      display: inline-block; margin-top: 9px;
+      background: var(--sage-pale); color: var(--sage);
+      font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 12px;
+    }
+
+    /* ORDER */
+    .order-section {
+      background: var(--brown); color: var(--cream); padding: 110px 52px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .order-section .section-label { color: var(--sage-light); }
+    .order-section .section-label::after { background: var(--sage-light); }
+    .order-section h2.sec-title { color: var(--cream); }
+    .order-section h2.sec-title em { color: var(--rust-light); }
+    .order-section > div > p {
+      font-size: 0.87rem; line-height: 2.1; color: rgba(253,250,244,0.68); margin: 16px 0 34px;
+    }
+    .order-steps { display: flex; flex-direction: column; gap: 18px; }
+    .order-step {
+      display: flex; gap: 18px; align-items: center;
+      background: rgba(255,255,255,0.06); padding: 18px 20px;
+      border-left: 3px solid var(--rust-light);
+    }
+    .step-num { font-family: 'Playfair Display', serif; font-size: 1.7rem; color: var(--rust-light); flex-shrink: 0; line-height: 1; }
+    .step-text h5 { font-size: 0.76rem; letter-spacing: 0.06em; color: var(--cream); margin-bottom: 4px; }
+    .step-text p { font-size: 0.68rem; color: rgba(253,250,244,0.52); line-height: 1.75; }
+
+    /* GIFTS */
+    .gifts { padding: 110px 52px; background: var(--cream); text-align: center; }
+    .gifts .section-label { justify-content: center; }
+    .gifts .section-label::after, .find-us .section-label::after { display: none; }
+    .gifts .section-label::before, .find-us .section-label::before { content: ''; display: block; width: 30px; height: 1px; background: var(--sage); }
+    .gifts > p {
+      font-size: 0.87rem; line-height: 2; color: var(--brown-mid);
+      max-width: 540px; margin: 0 auto 56px; opacity: 0.82;
+    }
+    .gift-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; max-width: 980px; margin: 0 auto; }
+    .gift-card {
+      background: var(--warm-white); padding: 44px 32px 38px;
+      position: relative; text-align: left;
+      border-bottom: 3px solid var(--linen);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .gift-card:hover { border-color: var(--rust); transform: translateY(-6px); }
+    .gift-card.featured { border-color: var(--rust); background: var(--rust); }
+    .gift-emoji { font-size: 2.2rem; margin-bottom: 18px; display: block; }
+    .gift-name {
+      font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 400;
+      color: var(--brown); margin-bottom: 10px;
+    }
+    .gift-card.featured .gift-name { color: white; }
+    .gift-desc { font-size: 0.72rem; line-height: 1.88; color: var(--brown-mid); opacity: 0.75; margin-bottom: 20px; }
+    .gift-card.featured .gift-desc { color: rgba(255,255,255,0.75); opacity: 1; }
+    .gift-price { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--rust); }
+    .gift-card.featured .gift-price { color: white; }
+    .gift-badge {
+      position: absolute; top: 16px; right: 16px;
+      background: var(--gold); color: white;
+      font-size: 0.56rem; letter-spacing: 0.15em; text-transform: uppercase; padding: 4px 10px;
+    }
+
+    /* ABOUT */
+    .about {
+      padding: 110px 52px; background: var(--linen);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+    }
+    .about-art {
+      background: var(--cream); height: 430px;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .about-art svg { width: 85%; }
+    .about-text p { font-size: 0.87rem; line-height: 2.1; color: var(--brown-mid); margin-top: 16px; margin-bottom: 24px; }
+    .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 28px; }
+    .stat { background: var(--warm-white); padding: 18px 20px; }
+    .stat-val { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: var(--rust); line-height: 1; }
+    .stat-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tan); margin-top: 5px; }
+
+    /* FIND US */
+    .find-us { padding: 110px 52px; text-align: center; }
+    .find-us .section-label { justify-content: center; }
+    .find-us > p { font-size: 0.87rem; line-height: 2; color: var(--brown-mid); max-width: 440px; margin: 0 auto 56px; opacity: 0.82; }
+    .find-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; max-width: 880px; margin: 0 auto; }
+    .find-card { background: var(--cream); padding: 38px 26px; border-top: 3px solid var(--sage); }
+    .find-icon { font-size: 1.9rem; margin-bottom: 14px; }
+    .find-card h4 { font-family: 'Playfair Display', serif; font-size: 0.98rem; font-weight: 400; color: var(--brown); margin-bottom: 10px; }
+    .find-card p { font-size: 0.71rem; line-height: 1.85; color: var(--brown-mid); opacity: 0.7; }
+
+    /* FOOTER */
+    footer { background: var(--charcoal); color: var(--cream); padding: 78px 52px 38px; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 56px; margin-bottom: 56px; }
+    .footer-brand-name { font-family: 'Playfair Display', serif; font-size: 1.75rem; font-weight: 400; color: var(--cream); margin-bottom: 5px; }
+    .footer-brand-tagline { font-family: 'Lora', serif; font-style: italic; font-size: 0.76rem; color: var(--tan); margin-bottom: 18px; }
+    .footer-about { font-size: 0.7rem; line-height: 1.9; color: rgba(253,250,244,0.42); max-width: 300px; }
+    .footer-col h5 { font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--sage-light); margin-bottom: 18px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+    .footer-col ul li a { text-decoration: none; color: rgba(253,250,244,0.47); font-size: 0.7rem; transition: color 0.25s; }
+    .footer-col ul li a:hover { color: var(--cream); }
+    .footer-bottom { border-top: 1px solid rgba(255,255,255,0.07); padding-top: 26px; display: flex; justify-content: space-between; font-size: 0.6rem; color: rgba(253,250,244,0.28); }
+    .footer-social { display: flex; gap: 16px; }
+    .footer-social a { color: rgba(253,250,244,0.38); text-decoration: none; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.25s; }
+    .footer-social a:hover { color: var(--rust-light); }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes slide  { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity 0.75s ease, transform 0.75s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    @media(max-width:960px){
+      nav { padding:16px 22px; }
+      .nav-links { display:none; }
+      .hero,.why,.channels,.order-section,.about { grid-template-columns:1fr; gap:44px; padding:80px 24px; }
+      .hero { padding-top:100px; }
+      .hero-art { display:none; }
+      .products,.gifts,.find-us { padding:80px 24px; }
+      .products-grid { grid-template-columns:1fr 1fr; }
+      .gift-cards,.find-grid { grid-template-columns:1fr; max-width:380px; }
+      .footer-top { grid-template-columns:1fr; gap:36px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="nav-logo-main">The Nesting Table</span>
+    <span class="nav-logo-sub">Heritage Lake · Mackinaw, IL</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#why">Our Story</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#order">How to Order</a></li>
+    <li><a href="#gifts">Gift Baskets</a></li>
+    <li><a href="#find" class="nav-cta">Find Us</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <p class="hero-tag">Handcrafted with love</p>
+    <h1 class="hero-title">
+      From Our<br/>Home to<br/><em>Yours</em>
+    </h1>
+    <p class="hero-verse">"Be fruitful and multiply and fill the earth<br/>and subdue it." — Genesis 1:28a</p>
+    <p class="hero-desc">
+      Handcrafted cedar birdhouses, fresh-baked sourdough and muffins, farm-fresh eggs, and seasonal garden produce — made with care, rooted in faith, offered with love.
+    </p>
+    <div class="hero-buttons">
+      <a href="#order" class="btn-primary">Pre-Order This Week</a>
+      <a href="#products" class="btn-ghost">See Our Products</a>
+    </div>
+    <div class="hero-pills">
+      <span class="pill">🪵 Cedar Birdhouses</span>
+      <span class="pill">🍞 Fresh Baked Goods</span>
+      <span class="pill">🥚 Farm Eggs</span>
+      <span class="pill">🌿 Seasonal Produce</span>
+    </div>
+  </div>
+  <div class="hero-art">
+    <svg viewBox="0 0 460 480" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="460" height="480" fill="#f7f2e9" rx="4"/>
+      <!-- Sun glow -->
+      <circle cx="385" cy="68" r="52" fill="rgba(201,145,58,0.11)"/>
+      <circle cx="385" cy="68" r="32" fill="rgba(201,145,58,0.17)"/>
+      <!-- Ground shadow -->
+      <ellipse cx="230" cy="443" rx="206" ry="16" fill="rgba(122,143,108,0.15)"/>
+      <!-- Garden bed -->
+      <rect x="36" y="394" width="126" height="11" rx="4" fill="#a8b89a"/>
+      <rect x="48" y="378" width="8" height="19" rx="2" fill="#7a8f6c"/>
+      <rect x="64" y="370" width="8" height="26" rx="2" fill="#7a8f6c"/>
+      <rect x="80" y="375" width="8" height="21" rx="2" fill="#7a8f6c"/>
+      <rect x="96" y="368" width="8" height="28" rx="2" fill="#7a8f6c"/>
+      <rect x="112" y="373" width="8" height="22" rx="2" fill="#7a8f6c"/>
+      <circle cx="52" cy="375" r="5" fill="#c8d8b0"/>
+      <circle cx="68" cy="367" r="5" fill="#c8d8b0"/>
+      <circle cx="84" cy="372" r="5" fill="#c8d8b0"/>
+      <circle cx="100" cy="365" r="5" fill="#c8d8b0"/>
+      <!-- Post -->
+      <rect x="220" y="225" width="13" height="198" rx="3" fill="#7a5238"/>
+      <!-- Birdhouse body -->
+      <rect x="172" y="164" width="108" height="83" rx="4" fill="#c4a882"/>
+      <rect x="176" y="167" width="100" height="77" rx="3" fill="#cdb28c"/>
+      <!-- Roof -->
+      <polygon points="157,165 226,112 295,165" fill="#7a5238"/>
+      <polygon points="160,165 226,116 292,165" fill="#8a6248"/>
+      <!-- Hole -->
+      <circle cx="226" cy="197" r="13" fill="#5a3e2b"/>
+      <circle cx="226" cy="197" r="10" fill="#3d2820"/>
+      <!-- Perch -->
+      <rect x="220" y="210" width="12" height="4" rx="2" fill="#7a5238"/>
+      <rect x="222" y="214" width="8" height="14" rx="2" fill="#9a6948"/>
+      <!-- Bird on roof -->
+      <ellipse cx="268" cy="119" rx="9" ry="6" fill="#4e3420" transform="rotate(-14,268,119)"/>
+      <circle cx="276" cy="113" r="5" fill="#4e3420"/>
+      <polygon points="281,112 291,110 281,115" fill="#c08b35"/>
+      <circle cx="278" cy="111" r="1.1" fill="white"/>
+      <!-- Bread loaf -->
+      <ellipse cx="342" cy="378" rx="53" ry="27" fill="#c4a057"/>
+      <ellipse cx="342" cy="370" rx="48" ry="21" fill="#d4b070"/>
+      <path d="M313,364 Q342,350 371,364" stroke="#b8903a" stroke-width="1.4" fill="none"/>
+      <path d="M317,373 Q342,360 367,373" stroke="#b8903a" stroke-width="1.1" fill="none"/>
+      <path d="M322,342 Q318,330 322,318" stroke="rgba(160,120,60,0.28)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M342,337 Q338,325 342,313" stroke="rgba(160,120,60,0.28)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M362,342 Q358,330 362,318" stroke="rgba(160,120,60,0.28)" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Egg basket -->
+      <ellipse cx="112" cy="314" rx="36" ry="14" fill="#c3a47a"/>
+      <ellipse cx="112" cy="310" rx="33" ry="12" fill="#d4b88a"/>
+      <ellipse cx="102" cy="301" rx="8" ry="10" fill="#f5f0e0" transform="rotate(-9,102,301)"/>
+      <ellipse cx="118" cy="299" rx="8" ry="10" fill="#f0ead8" transform="rotate(7,118,299)"/>
+      <ellipse cx="110" cy="294" rx="7" ry="9" fill="#f7f2e8" transform="rotate(-2,110,294)"/>
+      <path d="M78,310 Q112,274 146,310" stroke="#a07848" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Flowers left -->
+      <rect x="40" y="338" width="3" height="30" rx="1" fill="#7a8f6c"/>
+      <circle cx="41" cy="334" r="6" fill="#d47354" opacity="0.75"/>
+      <rect x="55" y="326" width="3" height="38" rx="1" fill="#7a8f6c"/>
+      <circle cx="56" cy="322" r="5" fill="#c9913a" opacity="0.8"/>
+      <!-- decorative italic text -->
+      <text x="230" y="52" fill="#c3a47a" font-family="Georgia,serif" font-style="italic" font-size="12" text-anchor="middle" opacity="0.55">handcrafted · homegrown</text>
+      <!-- Frame border -->
+      <rect x="10" y="10" width="440" height="460" stroke="rgba(195,164,122,0.22)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>🪵</span> Cedar Birdhouses <span>·</span>
+    Fresh Sourdough <span>·</span>
+    <span>🥚</span> Farm Fresh Eggs <span>·</span>
+    Seasonal Muffins <span>·</span>
+    <span>🌿</span> Garden Produce <span>·</span>
+    Gift Baskets <span>·</span>
+    Heritage Farmers Market · Pekin, IL <span>·</span>
+    <span>🪵</span> Cedar Birdhouses <span>·</span>
+    Fresh Sourdough <span>·</span>
+    <span>🥚</span> Farm Fresh Eggs <span>·</span>
+    Seasonal Muffins <span>·</span>
+    <span>🌿</span> Garden Produce <span>·</span>
+    Gift Baskets <span>·</span>
+    Heritage Farmers Market · Pekin, IL <span>·</span>
+  </div>
+</div>
+
+<!-- OUR WHY -->
+<section class="why" id="why">
+  <div class="why-text reveal">
+    <p class="section-label">Our Story</p>
+    <h2 class="sec-title">Rooted in<br/><em>Faith & Creation</em></h2>
+    <p>At The Nesting Table, everything we make is an act of gratitude — a small offering back to the God who made the birds, the wheat, the soil, and the seasons.</p>
+    <p>We find our inspiration in life's simple pleasures: watching birds at dawn, kneading dough on a quiet morning, tending the garden as the sun climbs. We believe in holy stewardship — using the gifts of creation with care, intention, and joy.</p>
+    <div class="scripture-block">
+      "Be fruitful and multiply and fill the earth and subdue it..."
+      <cite>Genesis 1:28a — the verse we build on</cite>
+    </div>
+  </div>
+  <div class="why-values reveal">
+    <div class="why-value">
+      <span class="why-icon">🐦</span>
+      <div>
+        <h4>Celebrating Creation</h4>
+        <p>The birds at dawn, the garden at dusk — we find God's beauty in these moments and strive to reflect it in every birdhouse and every loaf.</p>
+      </div>
+    </div>
+    <div class="why-value">
+      <span class="why-icon">🌾</span>
+      <div>
+        <h4>Wholesome Goodness</h4>
+        <p>Natural, high-quality ingredients. Organic where we can. Every bite is a small celebration of the earth's bounty, made to nourish body and soul.</p>
+      </div>
+    </div>
+    <div class="why-value">
+      <span class="why-icon">🌱</span>
+      <div>
+        <h4>Gardening & Stewardship</h4>
+        <p>Working the soil, raising hens, building birdhouses — tending creation as commanded, offering its fruits to our neighbors and community.</p>
+      </div>
+    </div>
+    <div class="why-value">
+      <span class="why-icon">✝️</span>
+      <div>
+        <h4>Glorifying God</h4>
+        <p>Every loaf baked, every birdhouse built is a chance to share His love and creativity. We're more than a business — we're a testimony.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <div class="products-header reveal">
+    <p class="section-label">What We Make</p>
+    <h2 class="sec-title">Simple Things,<br/><em>Made with Care</em></h2>
+  </div>
+  <div class="products-grid">
+    <div class="product-card reveal">
+      <div class="product-art pa-birdhouse">🪵</div>
+      <div class="product-body">
+        <p class="product-tag">Handcrafted</p>
+        <h3 class="product-name">Cedar Birdhouses</h3>
+        <p class="product-desc">Simple, solid box birdhouses handcrafted from cedar. Built to last and made to welcome birds into your yard.</p>
+        <p class="product-price">$30 each</p>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-art pa-baked">🍞</div>
+      <div class="product-body">
+        <p class="product-tag">Fresh Baked</p>
+        <h3 class="product-name">Baked Goods</h3>
+        <p class="product-desc">Sourdough loaves, seasonal large muffins, banana and zucchini bread. A rotating weekly menu of 3–5 items, baked fresh to order every week.</p>
+        <p class="product-price">$3 – $12</p>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-art pa-eggs">🥚</div>
+      <div class="product-body">
+        <p class="product-tag">Farm Fresh</p>
+        <h3 class="product-name">Eggs</h3>
+        <p class="product-desc">From our own flock of 5 backyard hens here in Heritage Lake, Mackinaw. Free-range, pasture-raised, and honest — eggs from chickens you're welcome to meet.</p>
+        <p class="product-price">$6 – $8 / dozen</p>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-art pa-garden">🌿</div>
+      <div class="product-body">
+        <p class="product-tag">Seasonal</p>
+        <h3 class="product-name">Garden Produce</h3>
+        <p class="product-desc">Fresh vegetables grown in our own garden, offered as the seasons provide. What the earth gives, we share — no middleman, no miles traveled.</p>
+        <p class="product-price">$3.00 / lb</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHANNELS -->
+<section class="channels" id="how">
+  <div class="channels-text reveal">
+    <p class="section-label">How to Get It</p>
+    <h2 class="sec-title">Four Ways<br/>to <em>Find Us</em></h2>
+    <p>We keep it simple and local. Whether you catch us at the Heritage Farmers Market or pre-order online, everything is made fresh — just for you.</p>
+  </div>
+  <div class="channel-list reveal">
+    <div class="channel-item">
+      <span class="channel-num">01</span>
+      <div class="channel-content">
+        <h4>Heritage Farmers Market — Pekin, IL</h4>
+        <p>Find us at the Heritage Farmers Market in Pekin, IL. The birdhouses draw you in — the smell of fresh bread keeps you there. Come say hello.</p>
+        <span class="channel-badge">Heritage Farmers Market · Pekin, IL</span>
+      </div>
+    </div>
+    <div class="channel-item">
+      <span class="channel-num">02</span>
+      <div class="channel-content">
+        <h4>Weekly Pre-Orders</h4>
+        <p>Order online or by message by Thursday. Pick up Friday afternoon or find us at the Heritage Farmers Market in Pekin. Local delivery available. Zero waste, all flavor.</p>
+        <span class="channel-badge">Order by Thursday</span>
+      </div>
+    </div>
+    <div class="channel-item">
+      <span class="channel-num">03</span>
+      <div class="channel-content">
+        <h4>Local Wholesale</h4>
+        <p>Cedar box birdhouses carried at select local garden centers and gift shops — especially around Mother's Day, spring planting, and Christmas season.</p>
+        <span class="channel-badge">Seasonal</span>
+      </div>
+    </div>
+    <div class="channel-item">
+      <span class="channel-num">04</span>
+      <div class="channel-content">
+        <h4>Custom & Gift Orders</h4>
+        <p>A handcrafted birdhouse paired with a fresh loaf and farm eggs makes a heartfelt gift for any occasion — housewarming, birthday, or just because.</p>
+        <span class="channel-badge">$45 – $60</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER -->
+<section class="order-section" id="order">
+  <div class="reveal">
+    <p class="section-label">Pre-Orders Open</p>
+    <h2 class="sec-title">This Week's<br/><em>Baking Menu</em></h2>
+    <p>We rotate our menu seasonally — 3 to 5 fresh items each week so nothing is wasted and everything is made just for you. Order by Thursday, pickup Friday or find us at the Heritage Farmers Market in Pekin.</p>
+    <a href="#find" class="btn-primary">Place Your Order</a>
+  </div>
+  <div class="order-steps reveal">
+    <div class="order-step">
+      <span class="step-num">1</span>
+      <div class="step-text">
+        <h5>Browse This Week's Menu</h5>
+        <p>Check our Instagram or Facebook — we post the weekly rotation every Monday with photos fresh from the oven.</p>
+      </div>
+    </div>
+    <div class="order-step">
+      <span class="step-num">2</span>
+      <div class="step-text">
+        <h5>Order by Thursday</h5>
+        <p>Message us on social media or send an email. We confirm your order same day, every time.</p>
+      </div>
+    </div>
+    <div class="order-step">
+      <span class="step-num">3</span>
+      <div class="step-text">
+        <h5>Pickup Friday or Saturday</h5>
+        <p>Pick up from our home Friday afternoon, or find us at the Heritage Farmers Market in Pekin Saturday morning. Local delivery available too.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GIFTS -->
+<section class="gifts" id="gifts">
+  <p class="section-label">Gift Ideas</p>
+  <h2 class="sec-title reveal">Give Something <em>Handmade</em></h2>
+  <p class="reveal">Pair a handcrafted cedar birdhouse with fresh bread and farm eggs for a gift that feels genuinely special — because it is. Simple, wholesome, and made right here at home.</p>
+  <div class="gift-cards">
+    <div class="gift-card reveal">
+      <span class="gift-emoji">🍞</span>
+      <h3 class="gift-name">The Baker's Bundle</h3>
+      <p class="gift-desc">A fresh sourdough loaf, half-dozen seasonal muffins, and a dozen farm-fresh eggs. Tied up in linen — ready to give.</p>
+      <p class="gift-price">$32</p>
+    </div>
+    <div class="gift-card featured reveal">
+      <div class="gift-badge">Most Loved</div>
+      <span class="gift-emoji">🪵</span>
+      <h3 class="gift-name">The Birdhouse Bundle</h3>
+      <p class="gift-desc">A handcrafted cedar birdhouse paired with a fresh sourdough loaf and a dozen farm eggs. Simple, wholesome, and made with love.</p>
+      <p class="gift-price">$44+</p>
+    </div>
+    <div class="gift-card reveal">
+      <span class="gift-emoji">🌿</span>
+      <h3 class="gift-name">The Garden Basket</h3>
+      <p class="gift-desc">Seasonal garden produce and a fresh-baked zucchini or banana bread — a wholesome gift for the gardener in your life.</p>
+      <p class="gift-price">$48</p>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-art reveal">
+    <svg viewBox="0 0 360 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="360" height="340" fill="#f7f2e9"/>
+      <!-- Hen -->
+      <ellipse cx="100" cy="240" rx="37" ry="27" fill="#c4a057"/>
+      <circle cx="128" cy="223" r="17" fill="#c4a057"/>
+      <polygon points="143,223 154,219 143,227" fill="#d47354"/>
+      <circle cx="133" cy="219" r="2.8" fill="#2e2416"/>
+      <ellipse cx="96" cy="244" rx="26" ry="13" fill="#b8903a" transform="rotate(-14,96,244)"/>
+      <path d="M65,236 Q51,216 59,202" stroke="#8a6830" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <line x1="90" y1="265" x2="85" y2="277" stroke="#c4a057" stroke-width="3"/>
+      <line x1="108" y1="265" x2="113" y2="277" stroke="#c4a057" stroke-width="3"/>
+      <line x1="85" y1="277" x2="78" y2="281" stroke="#c4a057" stroke-width="2"/>
+      <line x1="85" y1="277" x2="88" y2="283" stroke="#c4a057" stroke-width="2"/>
+      <!-- Bread -->
+      <ellipse cx="240" cy="240" rx="62" ry="28" fill="#ece5d6"/>
+      <ellipse cx="240" cy="229" rx="56" ry="22" fill="#c4a057"/>
+      <ellipse cx="240" cy="223" rx="50" ry="17" fill="#d4b470"/>
+      <path d="M212,218 Q240,206 268,218" stroke="#b8903a" stroke-width="1.4" fill="none"/>
+      <path d="M216,227 Q240,215 264,227" stroke="#b8903a" stroke-width="1.1" fill="none"/>
+      <!-- Small birdhouse -->
+      <rect x="260" y="100" width="58" height="44" rx="3" fill="#c4a882"/>
+      <polygon points="252,102 289,73 326,102" fill="#7a5238"/>
+      <circle cx="289" cy="119" r="8" fill="#4e3420"/>
+      <circle cx="289" cy="119" r="6" fill="#3a2418"/>
+      <rect x="285" y="127" width="8" height="3" rx="1" fill="#7a5238"/>
+      <rect x="286" y="130" width="6" height="10" rx="1" fill="#9a6948"/>
+      <rect x="285" y="144" width="8" height="88" rx="2" fill="#7a5238"/>
+      <!-- eggs -->
+      <ellipse cx="154" cy="259" rx="9" ry="11" fill="#f5f0e0" transform="rotate(-7,154,259)"/>
+      <ellipse cx="170" cy="254" rx="9" ry="11" fill="#f0ead8" transform="rotate(5,170,254)"/>
+      <!-- Flowers -->
+      <rect x="49" y="286" width="4" height="28" rx="1" fill="#7a8f6c"/>
+      <circle cx="51" cy="282" r="7" fill="#d47354" opacity="0.8"/>
+      <rect x="64" y="276" width="4" height="38" rx="1" fill="#7a8f6c"/>
+      <circle cx="66" cy="272" r="6" fill="#c9913a" opacity="0.82"/>
+      <!-- Frame -->
+      <rect x="11" y="11" width="338" height="318" stroke="rgba(195,164,122,0.28)" stroke-width="1" fill="none"/>
+      <text x="180" y="312" fill="#c3a47a" font-family="Georgia,serif" font-style="italic" font-size="11" text-anchor="middle" opacity="0.65">life at the nesting table</text>
+    </svg>
+  </div>
+  <div class="about-text reveal">
+    <p class="section-label">About Us</p>
+    <h2 class="sec-title">A Home<br/><em>Business with Heart</em></h2>
+    <p>We're a family-run operation rooted in Heritage Lake, Mackinaw, IL — growing slowly and intentionally. We started at the farmers market with a handful of birdhouses and a few loaves of bread — and our neighbors kept coming back. That told us everything we needed to know.</p>
+    <p>We're not trying to be a factory. We're trying to be good stewards of what God has given us — a beautiful backyard in Heritage Lake, a garden, 5 happy hens, and a community in Mackinaw worth serving.</p>
+    <div class="about-stats">
+      <div class="stat"><div class="stat-val">4</div><div class="stat-label">Product Lines</div></div>
+      <div class="stat"><div class="stat-val">5</div><div class="stat-label">Backyard Hens</div></div>
+      <div class="stat"><div class="stat-val">100%</div><div class="stat-label">Handcrafted</div></div>
+      <div class="stat"><div class="stat-val">Mackinaw</div><div class="stat-label">IL — Locally Grown</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FIND US -->
+<section class="find-us" id="find">
+  <p class="section-label">Find Us</p>
+  <h2 class="sec-title reveal">Come Say <em>Hello</em></h2>
+  <p class="reveal">We love meeting our neighbors. Find us at the Heritage Farmers Market in Pekin, follow along on Instagram, or send us a message to place an order or commission something special.</p>
+  <div class="find-grid">
+    <div class="find-card reveal">
+      <div class="find-icon">🏪</div>
+      <h4>Heritage Farmers Market — Pekin, IL</h4>
+      <p>Find us at the Heritage Farmers Market in Pekin, IL. Look for the table with birdhouses and fresh bread — you'll probably smell us before you see us.</p>
+    </div>
+    <div class="find-card reveal">
+      <div class="find-icon">📱</div>
+      <h4>Instagram & Facebook</h4>
+      <p>Follow <strong>@TheNestingTable</strong> for this week's menu, birdhouse builds in progress, garden updates, and hen life.</p>
+    </div>
+    <div class="find-card reveal">
+      <div class="find-icon">📬</div>
+      <h4>Pre-Orders & Custom</h4>
+      <p>Message us to pre-order baked goods or put together a gift basket. We'd truly love to hear from you.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand-name">The Nesting Table</div>
+      <div class="footer-brand-tagline">Handcrafted · Homegrown · Wholesome</div>
+      <p class="footer-about">A faith-rooted home business in Heritage Lake, Mackinaw, IL — offering handcrafted cedar birdhouses, fresh-baked goods, farm eggs from our 5 hens, and seasonal garden produce. Made with love, offered with gratitude.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Products</h5>
+      <ul>
+        <li><a href="#products">Cedar Birdhouses</a></li>
+        <li><a href="#products">Baked Goods</a></li>
+        <li><a href="#products">Farm Eggs</a></li>
+        <li><a href="#products">Garden Produce</a></li>
+        <li><a href="#gifts">Gift Baskets</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Connect</h5>
+      <ul>
+        <li><a href="#why">Our Story</a></li>
+        <li><a href="#how">How to Order</a></li>
+        <li><a href="#find">Find Us</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Facebook</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 The Nesting Table. Made with love & faith.</span>
+    <div class="footer-social">
+      <a href="#">Instagram</a>
+      <a href="#">Facebook</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 85);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  els.forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
